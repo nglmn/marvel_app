@@ -16,14 +16,26 @@ class MarvelService {
 	//делаєм запроси до api
 
 	//отримуєм усіх персонажів
-	getAllCharacters = () => {
-		return this.getResource(`${this._apiBase}characters?limit=9&offset=100&${this._apiKey}`); //берем данні з акк арі
+	getAllCharacters = async () => {
+		const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=100&${this._apiKey}`); //берем данні з акк арі
+		return res.data.results.map(this._transformCharacter);
 	};
 
-	getCharacterById = (id) => {
+	getCharacterById = async (id) => {
 		// отримуємо одного персонжа по id
-		return this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
+		const res = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`);
+		return this._transformCharacter(res.data.results[0]);
 	};
+
+	_transformCharacter = (character) => { //трансформує тільки необхідні данні із персонажу 
+		return {
+			name: character.name,
+			description: character.description ? `${character.description.slice(0, 200)}...` : 'Sorry, there is no description for this character :)',
+			thumbnail: character.thumbnail.path + '.' + character.thumbnail.extension,
+			homepage: character.url,
+			wiki: character.urls[1].url
+		}
+	}
 }
 
 export default MarvelService;

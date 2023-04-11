@@ -8,35 +8,29 @@ import mjolnir from '../../resources/img/mjolnir.png';
 class RandomChar extends Component {
     constructor(props) {
         super(props);
-        this.updateCharacter();
-    }
-    state = {
-        name: null,
-        description: null,
-        thumbnail: null,
-        homepage: null,
-        wiki: null
+        this.updateCharacter();  // визиваємо цей метод 
+        this.state = {
+            character: {}
+        }
     }
 
     marvelService = new MarvelService();
 
+    onCharacterLoaded = (character) => { // подгрузка персонажа 
+        this.setState({ character })
+    }
+
     updateCharacter = () => {
-        const id = 1011005;
+        const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); //генерація нового случайного персонажа 
         this.marvelService
+            // .getAllCharacters()
+            // .then(res => console.log(res))
             .getCharacterById(id)
-            .then(res => {
-                this.setState({
-                    name: res.data.results[0].name,
-                    description: res.data.results[0].description,
-                    thumbnail: res.data.results[0].thumbnail.path + '.' + res.data.results[0].thumbnail.extension,
-                    homepage: res.data.results[0].urls[0].url,
-                    wiki: res.data.results[0].urls[1].url
-                })
-            })
+            .then(this.onCharacterLoaded)
     }
 
     render() {
-        const { name, description, thumbnail, homepage, wiki } = this.state;
+        const { character: { name, description, thumbnail, homepage, wiki } } = this.state;
         return (
             <div className="randomchar" >
                 <div className="randomchar__block">
