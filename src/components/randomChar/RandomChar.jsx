@@ -45,7 +45,6 @@ class RandomChar extends Component {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); //генерація нового случайного персонажа 
         this.marvelService
             // .getAllCharacters()
-            // .then(res => console.log(res))
             .getCharacterById(id)
             .then(this.onCharacterLoaded)
             .catch(this.onError)

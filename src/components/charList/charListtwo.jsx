@@ -1,15 +1,13 @@
 import { Component } from 'react';
-
-import MarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
-
+import ErrorMessage from '../errorMessage/ErrorMessage';
+import MarvelService from '../../services/MarvelService';
 import './charList.scss';
 
 class CharList extends Component {
 
     state = {
-        characterList: [],
+        charList: [],
         loading: true,
         error: false
     }
@@ -17,55 +15,60 @@ class CharList extends Component {
     marvelService = new MarvelService();
 
     componentDidMount() {
-        this.marvelService
-            .getAllCharacters()
-            .then(this.onCharacterListLoaded)
+        this.marvelService.getAllCharacters()
+            .then(this.onCharListLoaded)
             .catch(this.onError)
     }
 
-    onCharacterListLoaded = (characterList) => { // подгрузка персонажа, пока йде прогрузка,показуєця спіннер, потім він змінюєтся на підгруженного персонажа
+    onCharListLoaded = (charList) => {
         this.setState({
-            characterList,
+            charList,
             loading: false
         })
     }
 
-    onError = () => { // на випадок коли нічого не прогружаецяб в стейт підгружаеця помилка
+    onError = () => {
         this.setState({
-            loading: false,
-            error: true
+            error: true,
+            loading: false
         })
     }
 
+    // Этот метод создан для оптимизации, 
+    // чтобы не помещать такую конструкцию в метод render
     renderItems(arr) {
         const items = arr.map((item) => {
-            let imgNotFoundStyle = { 'objectFit': 'cover' };
+            let imgStyle = { 'objectFit': 'cover' };
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
-                imgNotFoundStyle = { 'objectFit': 'unset' }
+                imgStyle = { 'objectFit': 'unset' };
             }
+
             return (
-                <li className="char__item" key={item.id}>
-                    <img src={item.thumbnail} alt={item.name} style={imgNotFoundStyle} />
+                <li
+                    className="char__item"
+                    key={item.id}>
+                    <img src={item.thumbnail} alt={item.name} style={imgStyle} />
                     <div className="char__name">{item.name}</div>
                 </li>
             )
         });
-
+        // А эта конструкция вынесена для центровки спиннера/ошибки
         return (
             <ul className="char__grid">
                 {items}
             </ul>
-        );
+        )
     }
 
     render() {
-        const { characterList, loading, error } = this.state;
 
-        const items = this.renderItems(characterList);
+        const { charList, loading, error } = this.state;
+
+        const items = this.renderItems(charList);
 
         const errorMessage = error ? <ErrorMessage /> : null;
         const spinner = loading ? <Spinner /> : null;
-        const content = !(error || loading) ? items : null;
+        const content = !(loading || error) ? items : null;
 
         return (
             <div className="char__list">
