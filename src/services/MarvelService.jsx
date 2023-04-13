@@ -17,7 +17,7 @@ class MarvelService {
 
 	//отримуєм усіх персонажів
 	getAllCharacters = async () => {
-		const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=100&${this._apiKey}`); //берем данні з акк арі
+		const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=200&${this._apiKey}`); //берем данні з акк арі
 		return res.data.results.map(this._transformCharacter);
 	};
 
@@ -29,11 +29,13 @@ class MarvelService {
 
 	_transformCharacter = (character) => { //трансформує тільки необхідні данні із персонажу 
 		return {
+			id: character.id,
 			name: character.name,
 			description: character.description ? `${character.description.slice(0, 200)}...` : 'Sorry, there is no description for this character :)',
 			thumbnail: character.thumbnail.path + '.' + character.thumbnail.extension,
-			homepage: character.url,
-			wiki: character.urls[1].url
+			homepage: character.urls[0].url,
+			wiki: character.urls[1].url,
+			comics: character.comics.items
 		}
 	}
 }

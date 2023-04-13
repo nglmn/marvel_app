@@ -33,6 +33,12 @@ class RandomChar extends Component {
         })
     }
 
+    onChracterLoading() { // метод що показує спіннер коли персонаж грузиться для оновлення, визиваємо його в updateCharacter
+        this.setState({
+            loading: true
+        })
+    }
+
     onError = () => { // на випадок коли нічого не прогружаецяб в стейт підгружаеця помилка
         this.setState({
             loading: false,
@@ -41,8 +47,8 @@ class RandomChar extends Component {
     }
 
     updateCharacter = () => {
-        console.log('click');
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); //генерація нового случайного персонажа 
+        this.onChracterLoading();
         this.marvelService
             // .getAllCharacters()
             .getCharacterById(id)

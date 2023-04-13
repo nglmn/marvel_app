@@ -44,9 +44,13 @@ class CharList extends Component {
                 imgNotFoundStyle = { 'objectFit': 'unset' }
             }
             return (
-                <li className="char__item" key={item.id}>
+                <li className="char__item"
+                    key={item.id}
+                    onClick={() => this.props.onSelectedCharacter(item.id)}>
+
                     <img src={item.thumbnail} alt={item.name} style={imgNotFoundStyle} />
                     <div className="char__name">{item.name}</div>
+
                 </li>
             )
         });
