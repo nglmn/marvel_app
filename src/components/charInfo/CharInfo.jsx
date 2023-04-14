@@ -37,6 +37,8 @@ class CharInfo extends Component {
             .getCharacterById(characterId)
             .then(this.onCharacterLoaded)
             .catch(this.onError)
+
+        // this.fff.aaa = 9; //тест для вилову помилки errorBoundary
     }
 
 
