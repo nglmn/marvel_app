@@ -22,7 +22,7 @@ class ErrorBoundary extends Component { //пропуска помилку та �
         if (this.state.error === true) {
             return <ErrorMessage />
         }
-        return this.props.children;
+        return this.props.children; //коли помилки немає, то рендериться основний компонент
     }
 
 }
