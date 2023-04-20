@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import MarvelService from '../../services/MarvelService';
@@ -8,6 +8,9 @@ import Spinner from '../spinner/Spinner';
 import './charList.scss';
 
 class CharList extends Component {
+    constructor(props) {
+        super(props)
+    }
 
     state = {
         characterList: [],
@@ -69,16 +72,44 @@ class CharList extends Component {
         })
     }
 
+    // handleClick = () => {
+    //     this.setState({ clicked: true })
+    // }
+
+    // itemRefs = [];
+
+    // setRef = (ref) => {
+    //     this.itemRefs.push(ref);
+    // }
+
+    // focusOnItem = (id) => {
+
+    //     this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
+    //     this.itemRefs[id].classList.add('char__item_selected');
+    //     this.itemRefs[id].focus();
+    // }
+
+
+    // Этот метод создан для оптимизации, 
+    // чтобы не помещать такую конструкцию в метод render
     renderItems(arr) {
         const items = arr.map((item) => {
             let imgNotFoundStyle = { 'objectFit': 'cover' };
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
                 imgNotFoundStyle = { 'objectFit': 'unset' }
             }
+
+            const char_item = this.props.onSelectedCharacter ? 'char__item char__item_selected' : "char__item";
+
             return (
-                <li className="char__item"
+
+                <li className={char_item}
                     key={item.id}
-                    onClick={() => this.props.onSelectedCharacter(item.id)}>
+                    onClick={() => {
+                        this.props.onSelectedCharacter(item.id);
+                        // this.handleClick
+                        // this.focusOnItem(i)
+                    }}>
 
                     <img src={item.thumbnail} alt={item.name} style={imgNotFoundStyle} />
                     <div className="char__name">{item.name}</div>
@@ -113,7 +144,9 @@ class CharList extends Component {
                     className="button button__main button__long"
                     disabled={newItemLoading}
                     style={{ 'display': characterListEnded ? 'none' : 'block' }}
-                    onClick={() => this.onRequest(offset)}>
+                    onClick={() => {
+                        this.onRequest(offset)
+                    }}>
                     <div className="inner">load more</div>
                 </button>
             </div>
