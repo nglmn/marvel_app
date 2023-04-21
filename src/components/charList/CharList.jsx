@@ -82,10 +82,7 @@ class CharList extends Component {
             }
 
             const isSelected = this.props.characterId === item.id;
-            console.log(this.props.characterId);
             const char_item = isSelected ? 'char__item char__item_selected' : "char__item";
-            console.log(char_item);
-
 
             return (
 
