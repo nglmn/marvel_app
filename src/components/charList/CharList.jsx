@@ -72,24 +72,6 @@ class CharList extends Component {
         })
     }
 
-    // handleClick = () => {
-    //     this.setState({ clicked: true })
-    // }
-
-    // itemRefs = [];
-
-    // setRef = (ref) => {
-    //     this.itemRefs.push(ref);
-    // }
-
-    // focusOnItem = (id) => {
-
-    //     this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
-    //     this.itemRefs[id].classList.add('char__item_selected');
-    //     this.itemRefs[id].focus();
-    // }
-
-
     // Этот метод создан для оптимизации, 
     // чтобы не помещать такую конструкцию в метод render
     renderItems(arr) {
@@ -99,7 +81,11 @@ class CharList extends Component {
                 imgNotFoundStyle = { 'objectFit': 'unset' }
             }
 
-            const char_item = this.props.onSelectedCharacter ? 'char__item char__item_selected' : "char__item";
+            const isSelected = this.props.characterId === item.id;
+            console.log(this.props.characterId);
+            const char_item = isSelected ? 'char__item char__item_selected' : "char__item";
+            console.log(char_item);
+
 
             return (
 
@@ -107,8 +93,6 @@ class CharList extends Component {
                     key={item.id}
                     onClick={() => {
                         this.props.onSelectedCharacter(item.id);
-                        // this.handleClick
-                        // this.focusOnItem(i)
                     }}>
 
                     <img src={item.thumbnail} alt={item.name} style={imgNotFoundStyle} />
