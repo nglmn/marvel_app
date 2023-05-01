@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
@@ -7,84 +7,70 @@ import './randomChar.scss';
 // import thor from '../../resources/img/thor.jpeg';
 import mjolnir from '../../resources/img/mjolnir.png';
 
-class RandomChar extends Component {
+const RandomChar = () => {
+    const [character, setCharacter] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-    state = {
-        character: {},
-        loading: true,
-        error: false
+    const marvelService = new MarvelService();
+
+    useEffect(() => {
+        updateCharacter();
+        const timerId = setInterval(updateCharacter, 30000);
+
+        return () => {
+            clearInterval(timerId);
+        }
+    }, []);
+
+    const onCharacterLoaded = (character) => { // подгрузка персонажа, пока йде прогрузка,показуєця спіннер, потім він зменюєтся на підгруженного персонажа
+        setCharacter(character);
+        setLoading(false);
     }
 
-    componentDidMount() {
-        this.updateCharacter();
-        this.timerId = setInterval(this.updateCharacter, 10000);
+    const onChracterLoading = () => { // метод що показує спіннер коли персонаж грузиться для оновлення, визиваємо його в updateCharacter
+        setLoading(true);
     }
 
-    componentWillUnmount() {
-        clearInterval(this.timerId);
+    const onError = () => { // на випадок коли нічого не прогружаецяб в стейт підгружаеця помилка
+        setLoading(false);
+        setError(true);
     }
 
-    marvelService = new MarvelService();
-
-    onCharacterLoaded = (character) => { // подгрузка персонажа, пока йде прогрузка,показуєця спіннер, потім він зменюєтся на підгруженного персонажа
-        this.setState({
-            character: character,
-            loading: false
-        })
-    }
-
-    onChracterLoading() { // метод що показує спіннер коли персонаж грузиться для оновлення, визиваємо його в updateCharacter
-        this.setState({
-            loading: true
-        })
-    }
-
-    onError = () => { // на випадок коли нічого не прогружаецяб в стейт підгружаеця помилка
-        this.setState({
-            loading: false,
-            error: true
-        })
-    }
-
-    updateCharacter = () => {
+    const updateCharacter = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); //генерація нового случайного персонажа 
-        this.onChracterLoading();
-        this.marvelService
+        onChracterLoading();
+        marvelService
             // .getAllCharacters()
             .getCharacterById(id)
-            .then(this.onCharacterLoaded)
-            .catch(this.onError)
+            .then(onCharacterLoaded)
+            .catch(onError)
     }
 
-    render() {
-        const { character, loading, error } = this.state;
+    const errorMessage = error ? <ErrorMessage /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const content = !(error || loading || !character) ? <View character={character} /> : null;
 
-        const errorMessage = error ? <ErrorMessage /> : null;
-        const spinner = loading ? <Spinner /> : null;
-        const content = !(error || loading) ? <View character={character} /> : null;
-
-
-        return (
-            <div className="randomchar" >
-                {errorMessage}
-                {spinner}
-                {content}
-                <div className="randomchar__static">
-                    <p className="randomchar__title">
-                        Random character for today!<br />
-                        Do you want to get to know him better?
-                    </p>
-                    <p className="randomchar__title">
-                        Or choose another one
-                    </p>
-                    <button className="button button__main">
-                        <div className="inner" onClick={this.updateCharacter}>try it</div>
-                    </button>
-                    <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
-                </div>
+    return (
+        <div className="randomchar" >
+            {errorMessage}
+            {spinner}
+            {content}
+            <div className="randomchar__static">
+                <p className="randomchar__title">
+                    Random character for today!<br />
+                    Do you want to get to know him better?
+                </p>
+                <p className="randomchar__title">
+                    Or choose another one
+                </p>
+                <button onClick={updateCharacter} className="button button__main">
+                    <div className="inner">try it</div>
+                </button>
+                <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 const View = ({ character }) => {

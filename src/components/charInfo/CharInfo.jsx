@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import MarvelService from '../../services/MarvelService';
@@ -8,77 +8,60 @@ import Skeleton from '../skeleton/Skeleton';
 
 import './charInfo.scss';
 
-class CharInfo extends Component {
-    state = {
-        character: null,
-        loading: false,
-        error: false
-    }
+const CharInfo = (props) => {
+    const [character, setCharacter] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
-    marvelService = new MarvelService();
+    const marvelService = new MarvelService();
 
-    componentDidMount() { //визиваєця після того як компонент створений на сторінці
-        this.updateCharacter();
-    }
-    componentDidUpdate(prevProps) {
-        if (this.props.characterId !== prevProps.characterId) {
-            this.updateCharacter();
-        }
-    }
+    useEffect(() => {
+        updateCharacter();//визиваєця після того як компонент створений на сторінці
+    }, [props.characterId]);
 
-    updateCharacter = () => {
-        const { characterId } = this.props;
+    const updateCharacter = () => {
+        const { characterId } = props;
         if (!characterId) { //якшо карточка не вибрана, тоді просто повертаємо 'skeleton'(стандартну карточку)
             return;
         }
 
-        this.onCharacterLoading();
+        onCharacterLoading();
 
-        this.marvelService
+        marvelService
             .getCharacterById(characterId)
-            .then(this.onCharacterLoaded)
-            .catch(this.onError)
+            .then(onCharacterLoaded)
+            .catch(onError)
 
         // this.fff.aaa = 9; //тест для вилову помилки errorBoundary
     }
 
 
-    onCharacterLoaded = (character) => {
-        this.setState({
-            character,
-            loading: false
-        })
+    const onCharacterLoaded = (character) => {
+        setCharacter(character);
+        setLoading(false);
     }
-    onCharacterLoading = () => {
-        this.setState({
-            loading: true
-        })
+    const onCharacterLoading = () => {
+        setLoading(true);
     }
-    onError = () => {
-        this.setState({
-            error: true,
-            loading: false
-        })
+    const onError = () => {
+        setError(true);
+        setLoading(false);
     }
 
+    const skeleton = (character || loading || error) ? null : <Skeleton />;
+    const errorMessage = error ? <ErrorMessage /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const content = !(error || loading || !character) ? <View character={character} /> : null;
 
-    render() {
-        const { character, loading, error } = this.state;
+    return (
+        <div className="char__info">
+            {skeleton}
+            {spinner}
+            {errorMessage}
+            {content}
+        </div>
+    )
 
-        const skeleton = (character || loading || error) ? null : <Skeleton />;
-        const errorMessage = error ? <ErrorMessage /> : null;
-        const spinner = loading ? <Spinner /> : null;
-        const content = !(error || loading || !character) ? <View character={character} /> : null;
-
-        return (
-            <div className="char__info">
-                {skeleton}
-                {spinner}
-                {errorMessage}
-                {content}
-            </div>
-        )
-    }
 }
 
 const View = ({ character }) => {
