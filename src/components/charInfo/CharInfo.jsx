@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 import Skeleton from '../skeleton/Skeleton';
@@ -10,42 +10,28 @@ import './charInfo.scss';
 
 const CharInfo = (props) => {
     const [character, setCharacter] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
+    const { loading, error, getCharacterById, clearError } = useMarvelService();
 
     useEffect(() => {
         updateCharacter();//визиваєця після того як компонент створений на сторінці
     }, [props.characterId]);
 
     const updateCharacter = () => {
+        clearError();
         const { characterId } = props;
         if (!characterId) { //якшо карточка не вибрана, тоді просто повертаємо 'skeleton'(стандартну карточку)
             return;
         }
 
-        onCharacterLoading();
-
-        marvelService
-            .getCharacterById(characterId)
+        getCharacterById(characterId)
             .then(onCharacterLoaded)
-            .catch(onError)
-
         // this.fff.aaa = 9; //тест для вилову помилки errorBoundary
     }
 
 
     const onCharacterLoaded = (character) => {
         setCharacter(character);
-        setLoading(false);
-    }
-    const onCharacterLoading = () => {
-        setLoading(true);
-    }
-    const onError = () => {
-        setError(true);
-        setLoading(false);
     }
 
     const skeleton = (character || loading || error) ? null : <Skeleton />;

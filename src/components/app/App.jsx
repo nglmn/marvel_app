@@ -6,6 +6,9 @@ import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
 import ErrorBoundary from "../errorBoundary/errorBoundary";
 
+import ComicsList from "../comicsList/ComicsList";
+import AppBanner from "../appBanner/AppBanner";
+
 
 const App = () => {
 
@@ -27,6 +30,8 @@ const App = () => {
                         <CharInfo characterId={selectedCaharacter} />
                     </ErrorBoundary>
                 </div>
+                {/* <AppBanner />
+                <ComicsList /> */}
             </main>
         </div>
     )

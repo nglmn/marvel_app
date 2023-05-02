@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 
@@ -10,28 +10,21 @@ import './charList.scss';
 const CharList = (props) => {
 
     const [characterList, setCharacterList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(200); //значення таке ж як і в _baseOffset в marvel service 
     const [characterListEnded, setCharacterListEnded] = useState(false);
 
-    const marvelService = new MarvelService();
+    const { loading, error, getAllCharacters } = useMarvelService();
 
     useEffect(() => {
-        onRequest()
+        onRequest(offset, true)
     }, []);
 
-    const onRequest = (offset) => { // новий запрос на сервер шоб загрузить ще персонажів 
-        onCharacterListLoading();
-        marvelService
-            .getAllCharacters(offset)
+    const onRequest = (offset, initial) => { // новий запрос на сервер шоб загрузить ще персонажів 
+        initial ? setNewItemLoading(false) : setNewItemLoading(true)
+        getAllCharacters(offset)
             .then(onCharacterListLoaded)
-            .catch(onError)
-    }
 
-    const onCharacterListLoading = () => { //переключает состояніе новим елементов в true
-        setNewItemLoading(true);
     }
 
     //отримуєм нові данні, після чого розгортаєм всіх персонажів 
@@ -43,15 +36,9 @@ const CharList = (props) => {
         }
 
         setCharacterList(characterList => [...characterList, ...newCharacterList]);
-        setLoading(false);
         setNewItemLoading(false);
         setOffset(offset => offset + 9);
         setCharacterListEnded(ended);
-    }
-
-    const onError = () => { // на випадок коли нічого не прогружаецяб в стейт підгружаеця помилка
-        setLoading(false);
-        setError(true);
     }
 
     // Этот метод создан для оптимизации, 
@@ -89,14 +76,13 @@ const CharList = (props) => {
     const items = renderItems(characterList);
 
     const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(error || loading) ? items : null;
+    const spinner = loading && !newItemLoading ? <Spinner /> : null;
 
     return (
         <div className="char__list">
             {errorMessage}
             {spinner}
-            {content}
+            {items}
             <button
                 className="button button__main button__long"
                 disabled={newItemLoading}
