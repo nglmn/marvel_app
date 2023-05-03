@@ -43,7 +43,7 @@ const ComicsList = () => {
                     <a href="#">
                         <img src={item.thumbnail} alt={item.title} className="comics__item-img" />
                         <div className="comics__item-name">{item.title}</div>
-                        <div className="comics__item-price">{item.price}</div>
+                        <div className="comics__item-price">$ {item.price}</div>
                     </a>
                 </li>
             )
@@ -74,8 +74,6 @@ const ComicsList = () => {
             </button>
         </div>
     )
-
-
 }
 
 export default ComicsList;
