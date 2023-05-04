@@ -29,7 +29,6 @@ const CharInfo = (props) => {
         // this.fff.aaa = 9; //тест для вилову помилки errorBoundary
     }
 
-
     const onCharacterLoaded = (character) => {
         setCharacter(character);
     }
@@ -47,7 +46,6 @@ const CharInfo = (props) => {
             {content}
         </div>
     )
-
 }
 
 const View = ({ character }) => {
