@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, StrictMode } from 'react';
 import PropTypes from 'prop-types';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -54,21 +55,27 @@ const CharList = (props) => {
             const char_item = isSelected ? 'char__item char__item_selected' : "char__item";
 
             return (
-                <li className={char_item}
-                    key={item.id}
-                    onClick={() => {
-                        props.onSelectedCharacter(item.id);
-                    }}>
+                <CSSTransition key={item.id} timeout={500} classNames='char__item'>
+                    <li className={char_item}
+                        key={item.id}
+                        onClick={() => {
+                            props.onSelectedCharacter(item.id);
+                        }}>
 
-                    <img src={item.thumbnail} alt={item.name} style={imgNotFoundStyle} />
-                    <div className="char__name">{item.name}</div>
-                </li>
+                        <img src={item.thumbnail} alt={item.name} style={imgNotFoundStyle} />
+                        <div className="char__name">{item.name}</div>
+                    </li>
+                </CSSTransition>
             )
         });
 
         return (
             <ul className="char__grid">
-                {items}
+                <TransitionGroup component={null}>
+                    <StrictMode>
+                        {items}
+                    </StrictMode>
+                </TransitionGroup>
             </ul>
         );
     }
