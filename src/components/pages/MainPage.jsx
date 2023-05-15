@@ -4,6 +4,7 @@ import RandomChar from "../randomChar/RandomChar";
 import CharList from "../charList/CharList";
 import CharInfo from "../charInfo/CharInfo";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
+import CharForm from "../charForm/CharForm";
 
 const MainPage = () => {
 
@@ -19,9 +20,14 @@ const MainPage = () => {
             <div className="char__content">
                 <CharList onSelectedCharacter={onSelectedCharacter}
                     characterId={selectedCaharacter} />
-                <ErrorBoundary>
-                    <CharInfo characterId={selectedCaharacter} />
-                </ErrorBoundary>
+                <div>
+                    <ErrorBoundary>
+                        <CharInfo characterId={selectedCaharacter} />
+                    </ErrorBoundary>
+                    <ErrorBoundary>
+                        <CharForm />
+                    </ErrorBoundary>
+                </div>
             </div>
         </>
     )
