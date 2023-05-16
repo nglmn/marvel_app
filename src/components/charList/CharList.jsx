@@ -1,4 +1,4 @@
-import React, { useState, useEffect, StrictMode } from 'react';
+import React, { useState, useEffect, StrictMode, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
@@ -95,14 +95,13 @@ const CharList = (props) => {
         );
     }
 
-    // const items = renderItems(characterList);
-
-    // const errorMessage = error ? <ErrorMessage /> : null;
-    // const spinner = loading && !newItemLoading ? <Spinner /> : null;
+    const elements = useMemo(() => {
+        return setContent(process, () => renderItems(characterList), newItemLoading);
+    }, [process])
 
     return (
         <div className="char__list">
-            {setContent(process, () => renderItems(characterList), newItemLoading)}
+            {elements}
             <button
                 className="button button__main button__long"
                 disabled={newItemLoading}
