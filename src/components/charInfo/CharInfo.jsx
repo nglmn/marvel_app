@@ -2,16 +2,14 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/MarvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
-import Skeleton from '../skeleton/Skeleton';
+import setContent from '../../utils/SetContent';
 
 import './charInfo.scss';
 
 const CharInfo = (props) => {
     const [character, setCharacter] = useState(null);
 
-    const { loading, error, getCharacterById, clearError } = useMarvelService();
+    const { getCharacterById, clearError, process, setProcess } = useMarvelService();
 
     useEffect(() => {
         updateCharacter();//визиваєця після того як компонент створений на сторінці
@@ -26,6 +24,7 @@ const CharInfo = (props) => {
 
         getCharacterById(characterId)
             .then(onCharacterLoaded)
+            .then(() => setProcess('confirmed'));
         // this.fff.aaa = 9; //тест для вилову помилки errorBoundary
     }
 
@@ -33,23 +32,15 @@ const CharInfo = (props) => {
         setCharacter(character);
     }
 
-    const skeleton = (character || loading || error) ? null : <Skeleton />;
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(error || loading || !character) ? <View character={character} /> : null;
-
     return (
         <div className="char__info">
-            {skeleton}
-            {spinner}
-            {errorMessage}
-            {content}
+            {setContent(process, View, character)}
         </div>
     )
 }
 
-const View = ({ character }) => {
-    const { name, thumbnail, description, homepage, wiki, comics } = character;
+const View = ({ data }) => {
+    const { name, thumbnail, description, homepage, wiki, comics } = data;
 
     let imgNotFoundStyle = { 'ojectFit': 'cover' };
     if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {

@@ -8,9 +8,10 @@ import useMarvelService from '../../services/MarvelService';
 
 import './CharForm.scss';
 
+
 const CharForm = () => {
     const [character, setCharacter] = useState(null);
-    const { loading, error, getCharacterByName, clearError } = useMarvelService();
+    const { getCharacterByName, clearError, process, setProcess } = useMarvelService();
 
     const onCharacterLoaded = (character) => {
         setCharacter(character);
@@ -19,9 +20,10 @@ const CharForm = () => {
         clearError();
         getCharacterByName(name)
             .then(onCharacterLoaded)
+            .then(() => setProcess('confirmed'))
     }
 
-    const errorMessage = error ? <div className="char__search-chritical-error"><ErrorMessage /></div> : null;
+    const errorMessage = process === 'error' ? <div className="char__search-chritical-error"><ErrorMessage /></div> : null;
     const result = !character ? null : character.length > 0 ?
         <div className="char__search-wrapper">
             <div className="char__search-success">There is! Visit {character[0].name} page?</div>
@@ -58,7 +60,7 @@ const CharForm = () => {
                         <button
                             type='submit'
                             className="button button__main"
-                            disabled={loading}>
+                            disabled={process === 'loading'}>
                             <div className="inner">find</div>
                         </button>
                     </div>
